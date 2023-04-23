@@ -37,7 +37,7 @@ LAMBDA_LOG_GROUP = '/aws/lambda/'
 
 # set logger
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.WARNING)
 
 
 def _extract_aws_logs_data(event):
