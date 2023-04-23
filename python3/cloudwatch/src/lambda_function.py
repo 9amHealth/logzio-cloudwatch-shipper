@@ -54,6 +54,19 @@ def _extract_aws_logs_data(event):
         raise ValueError("Exception: json loads")
 
 
+def _should_exclude(log):
+    str_message = str(log['message'])
+    exclude = os.environ.get('EXCLUDE')
+    if exclude:
+        filters = json.loads(os.environ['EXCLUDE'])
+        for filter in filters:
+            pattern = re.compile(filter, re.IGNORECASE)
+            if pattern.match(str_message):
+                logger.info(f"Message '{str_message}' matches pattern '{filter}', skipping it.")
+                return True
+    return False
+
+
 def _extract_lambda_log_message(log):
     # type: (dict) -> None
     str_message = str(log['message'])
@@ -104,6 +117,8 @@ def _parse_to_json(log):
 
 def _parse_cloudwatch_log(log, additional_data):
     # type: (dict, dict) -> bool
+    if _should_exclude(log):
+        return False
     _add_timestamp(log)
     if LAMBDA_LOG_GROUP in additional_data['logGroup']:
         _extract_lambda_log_message(log)
