@@ -3,6 +3,7 @@ import gzip
 import json
 import logging
 import os
+import re
 from io import BytesIO
 
 from python3.shipper.shipper import LogzioShipper
